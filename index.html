@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn tập kiến thức Sinh học 11 - KTGK</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER: 60px */
+        header {
+            height: 60px;
+            background: linear-gradient(180deg, #151515, #0a0a0a);
+            border-bottom: 2px solid #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 10;
+        }
+        .header-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ffd700;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-tools {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .timer-box {
+            font-size: 28px;
+            font-weight: 900;
+            background: #111;
+            border: 2px solid #ff3333;
+            color: #ff3333;
+            border-radius: 8px;
+            padding: 2px 16px;
+            min-width: 80px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+            transition: all 0.3s ease;
+        }
+        .timer-box.warning {
+            animation: pulse-red 0.5s infinite alternate;
+            background: #330000;
+        }
+        @keyframes pulse-red {
+            from { transform: scale(1); box-shadow: 0 0 10px #ff0000; }
+            to { transform: scale(1.08); box-shadow: 0 0 25px #ff0000; }
+        }
+
+        .btn-header {
+            background: #1a1a2e;
+            color: #ffd700;
+            border: 1px solid #ffd700;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-header:hover {
+            background: #ffd700;
+            color: #000;
+        }
+        .sound-toggle {
+            cursor: pointer;
+            font-size: 20px;
+            padding: 4px 8px;
+            background: #222;
+            border-radius: 6px;
+            border: 1px solid #555;
+        }
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #ffd700 #111;
+        }
+        main::-webkit-scrollbar {
+            width: 10px;
+        }
+        main::-webkit-scrollbar-track {
+            background: #111;
+        }
+        main::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 5px;
+        }
+
+        /* Question Box: Blue dark, yellow border #ffd700, font 36px */
+        .question-card {
+            background: radial-gradient(circle at center, #002244 0%, #001122 100%);
+            border: 3px solid #ffd700;
+            border-radius: 16px;
+            padding: 24px 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.25);
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+        }
+        .question-text {
+            font-size: 34px;
+            line-height: 1.35;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.8);
+            width: 100%;
+        }
+
+        /* 2x2 Answer Grid, font 36px */
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .answer-btn {
+            background: linear-gradient(145deg, #141b29, #090e18);
+            border: 2px solid #2a3b5c;
+            border-radius: 14px;
+            padding: 18px 24px;
+            font-size: 32px;
+            line-height: 1.3;
+            color: #e0e8f5;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .answer-btn .prefix {
+            color: #ffd700;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .answer-btn:hover {
+            border-color: #ffd700;
+            transform: translateY(-2px);
+        }
+        /* Clicked orange */
+        .answer-btn.selected {
+            background: linear-gradient(145deg, #e67e22, #d35400) !important;
+            border-color: #ffaa00 !important;
+            color: #fff !important;
+            box-shadow: 0 0 20px rgba(230, 126, 34, 0.7) !important;
+        }
+        /* Reveal states */
+        .answer-btn.correct-glow {
+            background: linear-gradient(145deg, #107c41, #0b532b) !important;
+            border-color: #00ff73 !important;
+            color: #ffffff !important;
+            animation: pulse-green 1s infinite alternate;
+            box-shadow: 0 0 35px #00ff66, inset 0 0 15px #00ff66 !important;
+            opacity: 1 !important;
+        }
+        .answer-btn.dimmed {
+            opacity: 0.2 !important;
+            filter: grayscale(80%);
+            transform: scale(0.98);
+        }
+
+        @keyframes pulse-green {
+            from { box-shadow: 0 0 15px #00ff66; }
+            to { box-shadow: 0 0 35px #00ff88, 0 0 50px rgba(0,255,136,0.6); }
+        }
+
+        /* Explanation Box */
+        .explanation-box {
+            display: none;
+            background: #0f1e17;
+            border: 2px dashed #00ff73;
+            border-radius: 12px;
+            padding: 16px 24px;
+            color: #adffd8;
+            font-size: 22px;
+            line-height: 1.45;
+            box-shadow: 0 0 20px rgba(0, 255, 115, 0.15);
+            animation: fadeIn 0.4s ease;
+        }
+        .explanation-box strong {
+            color: #ffd700;
+        }
+
+        /* FOOTER: 60px, 4 buttons, font 18px */
+        footer {
+            height: 60px;
+            background: #080808;
+            border-top: 2px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 0 24px;
+        }
+        .btn-ctrl {
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 10px 28px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .btn-prev {
+            background: #2b2d42;
+            color: #edf2f4;
+            border-color: #4a4e69;
+        }
+        .btn-prev:hover { background: #3d405b; }
+
+        .btn-pause {
+            background: #7f1d1d;
+            color: #fee2e2;
+            border-color: #ef4444;
+        }
+        .btn-pause:hover { background: #991b1b; }
+
+        .btn-reveal {
+            background: #b45309;
+            color: #fef3c7;
+            border-color: #f59e0b;
+        }
+        .btn-reveal:hover {
+            background: #d97706;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-next {
+            background: #14532d;
+            color: #dcfce7;
+            border-color: #22c55e;
+        }
+        .btn-next:hover {
+            background: #16a34a;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+        }
+
+        /* Welcome & End Screen */
+        .overlay-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #0c1220 0%, #000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 30px;
+            text-align: center;
+        }
+        .overlay-screen h1 {
+            font-size: 50px;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 25px rgba(255,215,0,0.6);
+        }
+        .overlay-screen p {
+            font-size: 24px;
+            max-width: 800px;
+            color: #ccc;
+            margin-bottom: 35px;
+            line-height: 1.5;
+        }
+        .btn-start {
+            background: #ffd700;
+            color: #000;
+            font-size: 28px;
+            font-weight: 900;
+            padding: 16px 48px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            transition: all 0.2s;
+        }
+        .btn-start:hover {
+            transform: scale(1.05);
+            background: #fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- START / INTRO SCREEN -->
+    <div id="introScreen" class="overlay-screen">
+        <h1>ÔN TẬP KIẾN THỨC SINH HỌC 11 - KTGK</h1>
+        <p>Hệ thống trò chơi điều phối lớp học kịch tính & chuẩn kiến thức GDPT 2018.<br>
+           35 câu hỏi then chốt: Chuyển hóa vật chất & năng lượng, Quang hợp, Hô hấp ở thực vật.</p>
+        <button class="btn-start" onclick="startGame()">BẮT ĐẦU TIẾT HỌC</button>
+    </div>
+
+    <!-- HEADER: 60px -->
+    <header>
+        <div class="header-title">
+            <span>🌿 SINH HỌC 11 - KTGK</span>
+            <span id="questionCounter" style="color: #00ff73; font-size: 20px;">[CÂU 1/35]</span>
+        </div>
+        <div class="header-tools">
+            <button class="btn-header" onclick="shuffleCurrentOrder()">🔀 Đảo toàn bộ câu hỏi</button>
+            <div id="timerDisplay" class="timer-box">30s</div>
+            <button id="soundBtn" class="sound-toggle" onclick="toggleBGM()" title="Bật/Tắt Nhạc Nền">🔊 Nhạc</button>
+            <button class="btn-header" onclick="goToMenu()">🏠 Menu</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main>
+        <div class="question-card">
+            <div class="question-text" id="questionContent">Đang tải câu hỏi...</div>
+        </div>
+
+        <div class="answers-grid" id="answersContainer">
+            <!-- 4 Options dynamically injected -->
+        </div>
+
+        <div class="explanation-box" id="explanationContent">
+            <!-- Teacher Explanation injected -->
+        </div>
+    </main>
+
+    <!-- FOOTER: 60px -->
+    <footer>
+        <button class="btn-ctrl btn-prev" onclick="prevQuestion()">⬅ CÂU TRƯỚC</button>
+        <button class="btn-ctrl btn-pause" id="btnPause" onclick="togglePause()">⏸ DỪNG</button>
+        <button class="btn-ctrl btn-reveal" id="btnReveal" onclick="revealAnswer()">💡 HIỆN ĐÁP ÁN</button>
+        <button class="btn-ctrl btn-next" onclick="nextQuestion()">TIẾP TỤC ➡</button>
+    </footer>
+
+    <script>
+        /* ================= 35 CÂU HỎI TRẮC NGHIỆM ĐÃ ĐƯỢC CHỌN LỌC & GIẢI THÍCH CHUYÊN SÂU ================= */
+        const originalQuestions = [
+            {
+                q: "Ở sinh vật tự dưỡng, nguồn năng lượng sơ cấp cung cấp cho quá trình chuyển hóa vật chất và năng lượng được lấy từ",
+                options: [
+                    "các hợp chất hữu cơ có sẵn trong môi trường.",
+                    "ánh sáng mặt trời hoặc năng lượng từ các phản ứng hóa học.",
+                    "nguồn nhiệt năng tích lũy trong môi trường đất.",
+                    "năng lượng ATP tạo ra từ quá trình phân giải tế bào."
+                ],
+                correct: 1, // B
+                explain: "Sinh vật tự dưỡng gồm quang tự dưỡng (dùng năng lượng ánh sáng) và hóa tự dưỡng (sử dụng năng lượng từ phản ứng oxy hóa các hợp chất vô cơ)."
+            },
+            {
+                q: "Quá trình nào sau đây biểu hiện của sự trao đổi chất và chuyển hóa năng lượng ở cấp độ tế bào?",
+                options: [
+                    "Lông hút của rễ hấp thụ nước và muối khoáng từ đất.",
+                    "Hệ tuần hoàn vận chuyển chất dinh dưỡng đến các mô.",
+                    "Tế bào đồng hóa các chất để xây dựng cấu trúc và dị hóa để giải phóng năng lượng.",
+                    "Thận lọc và bài tiết các chất cặn bã từ máu ra ngoài."
+                ],
+                correct: 2, // C
+                explain: "Đồng hóa và dị hóa diễn ra trực tiếp bên trong tế bào là bản chất cốt lõi của chuyển hóa vật chất và năng lượng ở cấp độ tế bào."
+            },
+            {
+                q: "Khi nói về các phương thức trao đổi chất và chuyển hóa năng lượng ở sinh giới, phát biểu nào sau đây đúng?",
+                options: [
+                    "Tất cả các loài vi khuẩn đều thuộc nhóm sinh vật hóa tự dưỡng.",
+                    "Sinh vật dị dưỡng có khả năng tự tổng hợp chất hữu cơ từ các chất vô cơ ban đầu.",
+                    "Sinh vật tự dưỡng tổng hợp chất hữu cơ bằng cách sử dụng nguồn carbon chủ yếu là CO2.",
+                    "Động vật ăn thực vật thuộc nhóm sinh vật quang tự dưỡng vì chúng lấy năng lượng từ thực vật."
+                ],
+                correct: 2, // C
+                explain: "Sinh vật tự dưỡng (quang tự dưỡng và hóa tự dưỡng) đều có khả năng đồng hóa nguồn carbon vô cơ chủ yếu là CO2 để tổng hợp chất hữu cơ."
+            },
+            {
+                q: "Khi tế bào hình hạt đậu của khí khổng hút đầy nước, hiện tượng nào sau đây sẽ xảy ra?",
+                options: [
+                    "Thành dày căng ra kéo theo thành mỏng co lại làm khí khổng đóng kín.",
+                    "Thành mỏng căng phồng ra làm cho thành dày cong theo và khí khổng mở ra.",
+                    "Cả thành mỏng và thành dày đều co lại đột ngột khiến khí khổng đóng một nửa.",
+                    "Thành dày duỗi thẳng ra làm cho thành mỏng ép chặt lại và khí khổng mở ra."
+                ],
+                correct: 1, // B
+                explain: "Tế bào hình hạt đậu có thành mỏng bên ngoài và thành dày phía trong. Khi no nước, thành mỏng giãn nở kéo căng thành dày cong theo làm mở khe khí khổng."
+            },
+            {
+                q: "Khi nói về quá trình biến đổi nitrogen trong cây, phát biểu nào sau đây sai?",
+                options: [
+                    "Quá trình khử nitrate (NO3- thành NH4+) diễn ra tại các mô thực vật nhờ sự tham gia của các enzyme khử.",
+                    "Ammonium (NH4+) tích lũy quá nhiều trong tế bào thực vật sẽ gây độc cho cây.",
+                    "Thực vật có thể sử dụng trực tiếp dạng nitrate (NO3-) để cấu tạo nên các acid amin mà không cần biến đổi.",
+                    "Quá trình liên kết NH4+ vào các keto acid để hình thành amide giúp thực vật giải độc ammonium dư thừa."
+                ],
+                correct: 2, // C
+                explain: "Cây chỉ sử dụng nitrogen ở dạng khử (NH4+) để đồng hóa vào amino acid. Do đó NO3- bắt buộc phải trải qua quá trình khử nitrate thành NH4+ trước."
+            },
+            {
+                q: "Khi bón phân quá liều lượng (bón quá đậm đặc) cho cây trồng, hiện tượng nào sau đây sẽ xảy ra?",
+                options: [
+                    "Cây hút được nhiều nước hơn do nồng độ dịch đất tăng.",
+                    "Cây bị héo và chết do nồng độ dịch đất cao hơn nồng độ dịch bào, làm rễ không hút được nước.",
+                    "Tốc độ thoát hơi nước ở lá tăng mạnh khiến cây nhanh bị mất nước.",
+                    "Rễ cây tăng cường sinh trưởng đột biến để tìm vùng đất có nồng độ thấp hơn."
+                ],
+                correct: 1, // B
+                explain: "Bón phân quá đậm đặc làm môi trường đất trở thành ưu trương so với tế bào lông hút, nước từ rễ bị rút ra ngoài dẫn đến cây héo và chết."
+            },
+            {
+                q: "Cơ chế chủ yếu điều tiết vận tốc thoát hơi nước qua khí khổng là sự thay đổi",
+                options: [
+                    "hàm lượng tinh bột tích lũy trong tế bào khí khổng.",
+                    "lực hút từ dòng mạch gỗ tạo ra.",
+                    "lượng nước và độ trương nước của hai tế bào hình hạt đậu.",
+                    "nhiệt độ và độ ẩm của môi trường xung quanh vào ban đêm."
+                ],
+                correct: 2, // C
+                explain: "Độ mở của lỗ khí phụ thuộc trực tiếp vào mức độ trương nước của hai tế bào hình hạt đậu viền quanh nó."
+            },
+            {
+                q: "Dạng nitrogen nào sau đây tồn tại phổ biến trong tự nhiên nhưng thực vật không thể hấp thụ trực tiếp được?",
+                options: [
+                    "NH4+.",
+                    "NO3-.",
+                    "N2 (Nitrogen phân tử trong khí quyển).",
+                    "Các hợp chất amide hòa tan."
+                ],
+                correct: 2, // C
+                explain: "Khí N2 có liên kết ba bền vững (N≡N), thực vật không có enzyme bẻ gãy liên kết này nên không hấp thụ trực tiếp được mà phải nhờ vi sinh vật cố định đạm."
+            },
+            {
+                q: "Vai trò nào sau đây không phải là vai trò sinh lí của nguyên tố magnesium (Mg) đối với thực vật?",
+                options: [
+                    "Là thành phần cốt lõi cấu tạo nên phân tử diệp lục.",
+                    "Kích hoạt nhiều enzyme liên quan đến quá trình quang hợp.",
+                    "Tham gia vào thành phần cấu tạo của vách tế bào thực vật.",
+                    "Đóng vai trò quan trọng trong sự vận chuyển vật chất ở cây."
+                ],
+                correct: 2, // C
+                explain: "Thành phần cấu tạo nên thành tế bào (phiến giữa) là hợp chất của Calcium (Calcium pectate), không phải magnesium."
+            },
+            {
+                q: "Nguồn cung cấp nitrogen vô cơ chủ yếu cho thực vật trong tự nhiên là",
+                options: [
+                    "Xác động thực vật phân hủy.",
+                    "Dạng muối khoáng NO3- và NH4+ trong đất.",
+                    "Khí tự do N2 tích tụ trong các kẽ đất.",
+                    "Phân bón hóa học do con người phun trên lá."
+                ],
+                correct: 1, // B
+                explain: "Thực vật hấp thụ nitrogen khoáng chủ yếu qua hệ rễ từ dung dịch đất ở hai dạng ion vô cơ tan là nitrate (NO3-) và ammonium (NH4+)."
+            },
+            {
+                q: "Cơ quan đóng vai trò chủ yếu trong việc hấp thụ nước và ion khoáng ở cây trên cạn là",
+                options: [
+                    "Lá cây.",
+                    "Thân cây.",
+                    "Rễ cây (đặc biệt là vùng lông hút).",
+                    "Hoa và quả."
+                ],
+                correct: 2, // C
+                explain: "Miền lông hút của rễ chứa hàng triệu tế bào lông hút giúp tăng diện tích tiếp xúc với dung dịch đất lên tối đa."
+            },
+            {
+                q: "Động lực nào sau đây đóng vai trò là lực kéo chính giúp dòng mạch gỗ vận chuyển nước ngược chiều trọng lực từ rễ lên đến đỉnh ngọn cây?",
+                options: [
+                    "Áp suất rễ (lực đẩy từ phía dưới).",
+                    "Lực gắn kết giữa các phân tử nước với nhau.",
+                    "Lực bám giữa các phân tử nước với thành mạch gỗ.",
+                    "Lực kéo do quá trình thoát hơi nước ở lá."
+                ],
+                correct: 3, // D
+                explain: "Thoát hơi nước ở lá giải phóng lượng nước lớn tạo áp suất thẩm thấu âm hút cột nước liên tục từ rễ lên đến ngọn (động lực đầu trên)."
+            },
+            {
+                q: "Dịch mạch rây được vận chuyển từ cơ quan nguồn (lá) đến cơ quan chứa chủ yếu nhờ vào",
+                options: [
+                    "Sự chênh lệch áp suất thẩm thấu giữa cơ quan nguồn và cơ quan chứa.",
+                    "Sự tiêu tốn năng lượng ATP trực tiếp từ hệ rễ.",
+                    "Lực hút rất mạnh sinh ra do thoát hơi nước ở quả.",
+                    "Trọng lực tự nhiên hút dịch chảy xuống phía dưới."
+                ],
+                correct: 0, // A
+                explain: "Động lực của dòng mạch rây là sự chênh lệch áp suất thẩm thấu (dòng áp lực) giữa nguồn tạo đường (áp suất cao) và cơ quan tiêu thụ/dự trữ (áp suất thấp)."
+            },
+            {
+                q: "Yếu tố môi trường nào sau đây làm tăng độ mở của khí khổng nhiều nhất trong điều kiện cây đủ nước?",
+                options: [
+                    "Cường độ ánh sáng thích hợp.",
+                    "Độ ẩm đất giảm sâu.",
+                    "Nồng độ CO2 tăng quá cao.",
+                    "Gió bão mạnh quét qua."
+                ],
+                correct: 0, // A
+                explain: "Ánh sáng kích thích quang hợp của tế bào khí khổng và hoạt hóa bơm ion làm tăng áp suất thẩm thấu kéo nước vào giúp lỗ khí mở rộng."
+            },
+            {
+                q: "Trong đất chua (pH thấp), lượng ion khoáng nào sau đây thường bị rửa trôi mạnh nhất khiến cây dễ bị thiếu hụt dinh dưỡng?",
+                options: [
+                    "Các ion kim loại nặng gây độc như Al3+.",
+                    "Các ion khoáng dương thiết yếu như Ca2+, Mg2+, K+.",
+                    "Các ion dạng oxide hòa tan khó tiêu.",
+                    "Toàn bộ lượng chất hữu cơ chưa phân hủy."
+                ],
+                correct: 1, // B
+                explain: "Trong đất chua, nồng độ ion H+ cao sẽ đẩy các cation kiềm và kiềm thổ (Ca2+, Mg2+, K+) ra khỏi bề mặt hạt keo đất vào dung dịch và bị nước mưa rửa trôi."
+            },
+            {
+                q: "Ở thực vật, các sắc tố quang hợp phân bố chủ yếu ở cấu trúc nào sau đây của lục lạp?",
+                options: [
+                    "Chất nền (stroma).",
+                    "Màng thylakoid.",
+                    "Màng ngoài của lục lạp.",
+                    "Màng trong của lục lạp."
+                ],
+                correct: 1, // B
+                explain: "Hệ sắc tố quang hợp (chlorophyll và carotenoid) được gắn định vị trên màng thylakoid để hấp thụ photon ánh sáng."
+            },
+            {
+                q: "Trong pha sáng của quá trình quang hợp, những sản phẩm nào được tạo ra để cung cấp trực tiếp cho chu trình Calvin (pha tối)?",
+                options: [
+                    "C6H12O6 và O2.",
+                    "ATP và NADPH.",
+                    "ADP và NADP+.",
+                    "CO2 và RuBP."
+                ],
+                correct: 1, // B
+                explain: "Pha sáng chuyển đổi năng lượng ánh sáng thành năng lượng hóa học tích trữ trong ATP và lực khử NADPH để cung cấp cho pha tối khử CO2."
+            },
+            {
+                q: "Những hợp chất nào sau đây đóng vai trò là nguyên liệu trực tiếp đầu vào của quá trình quang hợp ở thực vật?",
+                options: [
+                    "C6H12O6 và O2.",
+                    "CO2 và H2O.",
+                    "ATP và NADPH.",
+                    "CH4 và O2."
+                ],
+                correct: 1, // B
+                explain: "Phương trình tổng quát của quang hợp: 6CO2 + 12H2O -> C6H12O6 + 6O2 + 6H2O nhờ năng lượng ánh sáng và hệ sắc tố."
+            },
+            {
+                q: "Sắc tố nào sau đây tham gia trực tiếp vào việc chuyển hóa năng lượng ánh sáng thành năng lượng hóa học trong các liên kết ở trung tâm phản ứng quang hợp?",
+                options: [
+                    "Carotene.",
+                    "Xanthophyll.",
+                    "Diệp lục a (Chlorophyll a).",
+                    "Diệp lục b (Chlorophyll b)."
+                ],
+                correct: 2, // C
+                explain: "Chỉ có diệp lục a ở trung tâm phản ứng (P680 và P700) mới trực tiếp giải phóng điện tử kích động để biến đổi quang năng thành hóa năng."
+            },
+            {
+                q: "Ý nào sau đây mô tả đúng về vai trò của quá trình quang hợp ở thực vật đối với sinh quyển?",
+                options: [
+                    "Phân giải các chất hữu cơ giải phóng năng lượng.",
+                    "Cân bằng lượng khí O2 và CO2 trong khí quyển, ngăn hiệu ứng nhà kính.",
+                    "Tạo ra nguồn nhiệt năng cung cấp cho khí hậu trái đất.",
+                    "Hấp thụ lượng oxy dư thừa để làm sạch môi trường."
+                ],
+                correct: 1, // B
+                explain: "Quang hợp giải phóng O2 và hấp thu lượng lớn khí carbonic (CO2), giữ ổn định thành phần khí quyển và giảm thiểu biến đổi khí hậu."
+            },
+            {
+                q: "Trong pha sáng của quang hợp, nguồn năng lượng ánh sáng được hấp thụ để thực hiện quá trình nào đầu tiên?",
+                options: [
+                    "Khử CO2 thành chất hữu cơ.",
+                    "Phân ly nước (quang phân ly nước) giải phóng O2, điện tử và H+.",
+                    "Tổng hợp đường hữu cơ G3P.",
+                    "Kết hợp với các hợp chất 5 carbon."
+                ],
+                correct: 1, // B
+                explain: "Quang phân ly nước (2H2O -> 4H+ + 4e- + O2) diễn ra ở màng thylakoid cung cấp electron bù cho diệp lục và sinh ra O2."
+            },
+            {
+                q: "Khi cường độ ánh sáng đạt đến điểm bù ánh sáng (nhưng chưa đến điểm bão hòa), nếu tiếp tục tăng cường độ ánh sáng thì cường độ quang hợp sẽ",
+                options: [
+                    "Không thay đổi.",
+                    "Giảm dần đều.",
+                    "Tăng lên.",
+                    "Dừng lại đột ngột."
+                ],
+                correct: 2, // C
+                explain: "Từ điểm bù đến điểm bão hòa ánh sáng, cường độ quang hợp tăng tỉ lệ thuận với sự gia tăng của cường độ ánh sáng."
+            },
+            {
+                q: "Mối quan hệ giữa quang hợp và năng suất cây trồng được thể hiện qua chỉ số nào sau đây?",
+                options: [
+                    "Khoảng 90 - 95% tổng sinh khối (chất khô) của cây trồng được tạo ra từ sản phẩm quang hợp.",
+                    "Chỉ có 5% năng suất cây trồng phụ thuộc vào các hoạt động của bộ lá.",
+                    "Năng suất cây trồng hoàn toàn do phân bón khoáng từ đất quyết định.",
+                    "Cây trồng có diện tích lá càng nhỏ thì tích lũy năng suất hữu cơ càng cao."
+                ],
+                correct: 0, // A
+                explain: "Khoảng 90-95% chất khô trong cơ thể thực vật có nguồn gốc từ các sản phẩm đồng hóa CO2 của quá trình quang hợp."
+            },
+            {
+                q: "Điểm bão hòa CO2 đối với quá trình quang hợp được định nghĩa là nồng độ CO2 mà tại đó",
+                options: [
+                    "Quang hợp bắt đầu diễn ra mạnh nhất.",
+                    "Cường độ quang hợp đạt cực đại, nếu tăng thêm nồng độ CO2 thì cường độ quang hợp cũng không tăng.",
+                    "Cường độ quang hợp bằng với cường độ hô hấp của cây.",
+                    "Cây ngừng hoàn toàn mọi hoạt động hấp thụ khí ngoài môi trường."
+                ],
+                correct: 1, // B
+                explain: "Tại điểm bão hòa CO2, enzyme Rubisco đã hoạt động hết công suất tiếp nhận chất nền, tăng nồng độ CO2 thêm nữa cũng không làm tăng cường độ quang hợp."
+            },
+            {
+                q: "Để nâng cao hiệu suất quang hợp tối ưu ngoài đồng ruộng, người ta thường ứng dụng biện pháp kỹ thuật nào?",
+                options: [
+                    "Gieo trồng mật độ cực kỳ dày để phủ kín mặt đất.",
+                    "Tỉa cành, bấm ngọn hợp lý kết hợp mật độ gieo trồng vừa phải để lá cây nhận đủ ánh sáng.",
+                    "Tưới đẫm nước ngập gốc liên tục cả ngày lẫn đêm.",
+                    "Che tối toàn bộ ruộng vào buổi trưa để lá không bị đốt nóng."
+                ],
+                correct: 1, // B
+                explain: "Mật độ hợp lý và tỉa cành giúp tối ưu hóa diện tích tiếp nhận ánh sáng của bộ lá (chỉ số diện tích lá LAI tối ưu), nâng cao hiệu suất quang hợp của quần thể."
+            },
+            {
+                q: "Bào quan đóng vai trò chủ chốt, là vị trí diễn ra các giai đoạn chủ chốt của hô hấp hiếu khí ở tế bào thực vật là",
+                options: [
+                    "lục lạp.",
+                    "ti thể.",
+                    "lưới nội chất.",
+                    "bộ máy Golgi."
+                ],
+                correct: 1, // B
+                explain: "Ti thể là 'nhà máy năng lượng' của tế bào, nơi diễn ra chu trình Krebs (chất nền) và chuỗi truyền electron hô hấp (màng trong)."
+            },
+            {
+                q: "Phát biểu nào sau đây đúng khi nói về khái niệm hô hấp ở thực vật?",
+                options: [
+                    "Là quá trình tổng hợp chất hữu cơ đồng thời tích lũy năng lượng dưới dạng nhiệt năng.",
+                    "Là quá trình phân giải các hợp chất hữu cơ thành các chất vô cơ đơn giản, giải phóng năng lượng dưới dạng ATP và nhiệt.",
+                    "Là quá trình trao đổi khí chỉ diễn ra vào ban đêm ở các cơ quan sinh dưỡng.",
+                    "Là quá trình chuyển hóa năng lượng ánh sáng thành năng lượng hóa học trong các liên kết."
+                ],
+                correct: 1, // B
+                explain: "Hô hấp tế bào là quá trình phân giải dị hóa chất hữu cơ thành CO2 và H2O, giải phóng năng lượng ATP phục vụ các hoạt động sống."
+            },
+            {
+                q: "Khi nói về mối quan hệ giữa quang hợp và hô hấp ở thực vật, phát biểu nào sau đây đúng?",
+                options: [
+                    "Sản phẩm của quang hợp (C6H12O6, O2) là nguyên liệu cho quá trình hô hấp.",
+                    "Quang hợp và hô hấp là hai quá trình hoạt động hoàn toàn độc lập và không ảnh hưởng nhau.",
+                    "Hô hấp tạo ra chất hữu cơ tích lũy sinh khối, còn quang hợp phân giải chất hữu cơ để giải phóng năng lượng.",
+                    "Cả hai quá trình đều lấy khí O2 và thải khí CO2 ra ngoài môi trường khí quyển."
+                ],
+                correct: 0, // A
+                explain: "Sản phẩm của quang hợp là chất hữu cơ và O2 đóng vai trò là nguyên liệu cho hô hấp; ngược lại CO2 và H2O của hô hấp là nguyên liệu cho quang hợp."
+            },
+            {
+                q: "Việc bảo quản rau quả tươi trong kho lạnh hoặc tủ lạnh dựa trên nguyên lý tác động nào của nhân tố môi trường đến hô hấp tế bào?",
+                options: [
+                    "Hạ thấp nhiệt độ để ức chế tối đa tốc độ hô hấp tế bào, tránh tiêu hao chất hữu cơ.",
+                    "Loại bỏ hoàn toàn lượng khí O2 trong môi trường bảo quản.",
+                    "Tăng độ ẩm để kích thích quá trình lên men tự nhiên của rau quả.",
+                    "Làm tăng cường độ hô hấp để rau quả chín nhanh hơn."
+                ],
+                correct: 0, // A
+                explain: "Nhiệt độ thấp làm giảm hoạt tính của các enzyme hô hấp, làm chậm quá trình tiêu hao chất hữu cơ và kéo dài độ tươi ngon."
+            },
+            {
+                q: "Sơ đồ các giai đoạn chính của quá trình hô hấp hiếu khí ở thực vật diễn ra theo trình tự nào?",
+                options: [
+                    "Chu trình Krebs -> Đường phân -> Chuỗi truyền electron hô hấp.",
+                    "Đường phân -> Chu trình Krebs -> Chuỗi truyền electron hô hấp.",
+                    "Chuỗi truyền electron hô hấp -> Đường phân -> Chuỗi Krebs.",
+                    "Đường phân -> Lên men rượu -> Chu trình Krebs."
+                ],
+                correct: 1, // B
+                explain: "Quá trình hô hấp hiếu khí diễn ra tuần tự qua: 1. Đường phân (bào tương) -> 2. Chu trình Krebs (chất nền ti thể) -> 3. Chuỗi truyền electron (màng trong ti thể)."
+            },
+            {
+                q: "Giai đoạn đường phân của quá trình hô hấp tế bào diễn ra tại vị trí nào?",
+                options: [
+                    "Tế bào chất (bào tương).",
+                    "Chất nền của ti thể.",
+                    "Màng trong ti thể.",
+                    "Màng thylakoid."
+                ],
+                correct: 0, // A
+                explain: "Đường phân phân giải Glucose thành 2 phân tử Pyruvate diễn ra ngay trong tế bào chất mà không cần sự tham gia của ti thể hay khí oxy."
+            },
+            {
+                q: "Vai trò quan trọng nhất của quá trình hô hấp đối với các hoạt động sống của chính cơ thể thực vật là",
+                options: [
+                    "Tạo ra oxy cung cấp cho khí quyển.",
+                    "Tạo năng lượng dưới dạng ATP cung cấp cho mọi hoạt động sống và nhiệt năng duy trì nhiệt độ cơ thể.",
+                    "Phân hủy hoàn toàn độc tố sinh ra trong tế bào.",
+                    "Hấp thụ nước mạnh mẽ từ môi trường."
+                ],
+                correct: 1, // B
+                explain: "ATP được giải phóng từ hô hấp cung cấp động lực cho vận chuyển chủ động, trao đổi chất, phân chia tế bào và sinh trưởng của thực vật."
+            },
+            {
+                q: "Trong điều kiện thiếu oxy (ví dụ rễ cây bị ngập úng kéo dài), thực vật sẽ chuyển sang con đường hô hấp nào?",
+                options: [
+                    "Hô hấp hiếu khí mạnh mẽ.",
+                    "Phân giải kị khí (đường phân và lên men).",
+                    "Quang hô hấp tại lục lạp.",
+                    "Ngừng hoàn toàn mọi sự phân giải chất hữu cơ."
+                ],
+                correct: 1, // B
+                explain: "Khi thiếu O2, chuỗi truyền electron ngừng trệ, tế bào thực vật chuyển sang phân giải kị khí (lên men rượu ethanol hoặc lactic) sinh ít năng lượng và dễ tích độc."
+            },
+            {
+                q: "Vì sao khi hàm lượng nước trong các loại hạt (như ngô, thóc) giảm xuống mức rất thấp (hạt khô) thì thời gian bảo quản lại kéo dài?",
+                options: [
+                    "Nước thấp làm tăng cường độ hô hấp của hạt.",
+                    "Nước thấp ức chế tối đa hoạt động hô hấp tế bào của hạt, giúp hạt rơi vào trạng thái ngủ tiềm sinh và tránh tiêu hao chất hữu cơ.",
+                    "Hạt khô dễ bị vi khuẩn xâm nhập tiêu hủy chất hữu cơ tốt hơn.",
+                    "Thiếu nước khiến hạt không thể trao đổi khí hữu cơ với bên ngoài."
+                ],
+                correct: 1, // B
+                explain: "Nước là dung môi và tham gia trực tiếp vào phản ứng enzym. Giảm hàm lượng nước đưa hạt vào trạng thái sống tiềm sinh giúp bảo quản hạt lâu dài."
+            },
+            {
+                q: "Nồng độ khí nào sau đây nếu tăng cao trong môi trường lưu trữ nông sản sẽ có tác dụng ức chế hô hấp tế bào, giúp kéo dài thời gian bảo quản?",
+                options: [
+                    "Khí Oxy (O2).",
+                    "Khí Carbon dioxide (CO2).",
+                    "Khí Nitrogen (N2).",
+                    "Khí Hydrogen (H2)."
+                ],
+                correct: 1, // B
+                explain: "CO2 là sản phẩm cuối cùng của quá trình hô hấp. Khi nồng độ CO2 cao sẽ gây ức chế ngược đến các phản ứng enzym giải phóng khí này."
+            }
+        ];
+
+        /* ================= GAME LOGIC & AUDIO ENGINE ================= */
+        let questions = JSON.parse(JSON.stringify(originalQuestions));
+        let currentIndex = 0;
+        let timeLeft = 30;
+        let timerInterval = null;
+        let isPaused = false;
+        let isRevealed = false;
+        let selectedOptionIdx = null;
+
+        // WEB AUDIO API - TẠO NHẠC NỀN & ÂM HIỆU CHUẨN OFFLINE 100%
+        let audioCtx = null;
+        let bgmGain = null;
+        let bgmInterval = null;
+        let isMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                bgmGain = audioCtx.createGain();
+                bgmGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                bgmGain.connect(audioCtx.destination);
+                startDramaticBGM();
+            }
+        }
+
+        // Nhạc nền kịch tính tổng hợp theo nhịp đập suspense (không cần internet tải file)
+        function startDramaticBGM() {
+            if (bgmInterval) clearInterval(bgmInterval);
+            let beat = 0;
+            const bassNotes = [55, 55, 65, 50]; // Tần số âm trầm (A1, A1, C2, G1)
+            
+            bgmInterval = setInterval(() => {
+                if (isMuted || !audioCtx) return;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    
+                    osc.type = (beat % 2 === 0) ? 'sawtooth' : 'triangle';
+                    const freq = bassNotes[beat % bassNotes.length];
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                    noteGain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                    noteGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
+
+                    osc.connect(noteGain);
+                    noteGain.connect(bgmGain);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.45);
+                    beat++;
+                } catch(e) {}
+            }, 600); // 100 BPM
+        }
+
+        function playTickSound() {
+            if (isMuted || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Âm tít cao 880Hz
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        function playCorrectSound() {
+            if (isMuted || !audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => { // C major chord
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + i * 0.08);
+                    gain.gain.setValueAtTime(0.2, now + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.4);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + i * 0.08);
+                    osc.stop(now + i * 0.08 + 0.45);
+                });
+            } catch(e) {}
+        }
+
+        function toggleBGM() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('soundBtn');
+            btn.textContent = isMuted ? '🔇 Tắt' : '🔊 Nhạc';
+            if (bgmGain) {
+                bgmGain.gain.setValueAtTime(isMuted ? 0 : 0.08, audioCtx.currentTime);
+            }
+        }
+
+        /* ================= GAME CONTROL LOGIC ================= */
+
+        function startGame() {
+            document.getElementById('introScreen').style.display = 'none';
+            initAudio();
+            loadQuestion(0);
+        }
+
+        function goToMenu() {
+            if (confirm("Thầy/Cô có muốn quay về màn hình Giới thiệu?")) {
+                clearInterval(timerInterval);
+                document.getElementById('introScreen').style.display = 'flex';
+            }
+        }
+
+        function loadQuestion(index) {
+            if (index < 0 || index >= questions.length) return;
+            currentIndex = index;
+            isRevealed = false;
+            selectedOptionIdx = null;
+
+            // Update Header Counter
+            document.getElementById('questionCounter').textContent = `[CÂU ${currentIndex + 1}/${questions.length}]`;
+
+            // Reset UI
+            const q = questions[currentIndex];
+            document.getElementById('questionContent').textContent = `Câu ${currentIndex + 1}: ${q.q}`;
+            
+            // Build Answer Grid (A, B, C, D)
+            const letters = ['A', 'B', 'C', 'D'];
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '';
+
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.id = `opt-${idx}`;
+                btn.innerHTML = `<span class="prefix">${letters[idx]}.</span> <span>${optText}</span>`;
+                btn.onclick = () => selectOption(idx);
+                container.appendChild(btn);
+            });
+
+            // Hide explanation
+            const expBox = document.getElementById('explanationContent');
+            expBox.style.display = 'none';
+            expBox.innerHTML = `<strong>💡 GIẢI THÍCH CHI TIẾT (GV):</strong> ${q.explain}`;
+
+            // Reset and start timer (30s)
+            resetTimer();
+        }
+
+        function selectOption(index) {
+            if (isRevealed) return; // Prevent changing after reveal
+            selectedOptionIdx = index;
+            // Highlight selected button with orange color
+            document.querySelectorAll('.answer-btn').forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+        }
+
+        function revealAnswer() {
+            if (isRevealed) return;
+            isRevealed = true;
+            clearInterval(timerInterval);
+
+            const q = questions[currentIndex];
+            const correctIdx = q.correct;
+
+            // Update button styles
+            document.querySelectorAll('.answer-btn').forEach((btn, idx) => {
+                if (idx === correctIdx) {
+                    btn.classList.remove('selected');
+                    btn.classList.add('correct-glow');
+                } else {
+                    btn.classList.add('dimmed');
+                }
+            });
+
+            // Show explanation
+            document.getElementById('explanationContent').style.display = 'block';
+
+            // Play correct chime
+            playCorrectSound();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            isPaused = false;
+            updateTimerDisplay();
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    timeLeft--;
+                    updateTimerDisplay();
+
+                    if (timeLeft <= 5 && timeLeft > 0) {
+                        playTickSound();
+                    }
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timeLeft = 0;
+                        updateTimerDisplay();
+                        // When time runs out, auto reveal
+                        revealAnswer();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById('timerDisplay');
+            timerEl.textContent = `${timeLeft}s`;
+            if (timeLeft <= 5 && timeLeft > 0) {
+                timerEl.classList.add('warning');
+            } else {
+                timerEl.classList.remove('warning');
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('btnPause');
+            if (isPaused) {
+                btn.textContent = '▶ TIẾP TỤC ĐẾM';
+                btn.style.background = '#0284c7';
+                btn.style.borderColor = '#38bdf8';
+            } else {
+                btn.textContent = '⏸ DỪNG';
+                btn.style.background = '#7f1d1d';
+                btn.style.borderColor = '#ef4444';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                loadQuestion(currentIndex + 1);
+            } else {
+                alert("Chúc mừng Thầy/Cô và các em học sinh đã hoàn thành 35 câu hỏi ôn tập KTGK!");
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                loadQuestion(currentIndex - 1);
+            }
+        }
+
+        // ĐẢO TOÀN BỘ CÂU HỎI (Fisher-Yates Shuffle cho danh sách câu hỏi)
+        function shuffleCurrentOrder() {
+            if (confirm("Thầy/Cô có chắc chắn muốn xáo trộn ngẫu nhiên thứ tự toàn bộ câu hỏi?")) {
+                for (let i = questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [questions[i], questions[j]] = [questions[j], questions[i]];
+                }
+                loadQuestion(0);
+            }
+        }
+
+        // Bàn phím tắt hỗ trợ giáo viên điều phối sân khấu nhanh
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePause();
+            } else if (e.code === 'Enter') {
+                e.preventDefault();
+                revealAnswer();
+            } else if (e.code === 'ArrowRight') {
+                nextQuestion();
+            } else if (e.code === 'ArrowLeft') {
+                prevQuestion();
+            } else if (['Digit1', 'Digit2', 'Digit3', 'Digit4'].includes(e.code)) {
+                selectOption(parseInt(e.key) - 1);
+            }
+        });
+    </script>
+</body>
+</html>
