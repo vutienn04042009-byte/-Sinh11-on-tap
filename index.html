@@ -317,6 +317,64 @@
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+
+        /* Responsive layout for phones */
+        @media (max-width: 700px) {
+            html, body { width: 100%; height: 100%; height: 100dvh; }
+            body { overflow: hidden; }
+            header {
+                height: auto; min-height: 0; flex: 0 0 auto;
+                padding: 8px 10px; gap: 8px; flex-wrap: wrap;
+                justify-content: center;
+            }
+            .header-title {
+                width: 100%; justify-content: space-between; gap: 6px;
+                font-size: clamp(13px, 3.8vw, 18px); letter-spacing: 0;
+            }
+            .header-title span:first-child { min-width: 0; }
+            #questionCounter { font-size: 13px !important; white-space: nowrap; }
+            .header-tools { width: 100%; gap: 6px; justify-content: space-between; flex-wrap: wrap; }
+            .btn-header { font-size: 11px; padding: 6px 7px; }
+            .timer-box { font-size: 20px; min-width: 60px; padding: 2px 8px; }
+            .sound-toggle { font-size: 12px; padding: 5px 6px; }
+            main {
+                min-height: 0; padding: 10px 10px 12px; gap: 12px;
+                overflow-y: auto; -webkit-overflow-scrolling: touch;
+            }
+            .question-card { min-height: 0; padding: 14px 14px; border-width: 2px; border-radius: 12px; }
+            .question-text { font-size: clamp(18px, 5vw, 24px); line-height: 1.3; overflow-wrap: anywhere; }
+            .answers-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+            .answer-btn {
+                width: 100%; min-width: 0; padding: 12px 13px; gap: 9px;
+                font-size: clamp(16px, 4.2vw, 20px); line-height: 1.3;
+                border-radius: 10px; overflow-wrap: anywhere;
+            }
+            .answer-btn .prefix { flex-shrink: 0; }
+            .explanation-box { padding: 12px 14px; font-size: 16px; }
+            footer {
+                flex: 0 0 auto; height: auto; min-height: 0;
+                display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 7px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+            }
+            .btn-ctrl {
+                width: 100%; min-width: 0; padding: 10px 5px;
+                font-size: clamp(11px, 3.2vw, 14px); letter-spacing: 0;
+                line-height: 1.15; white-space: normal; border-radius: 8px;
+            }
+            .overlay-screen { padding: 20px 14px; overflow-y: auto; }
+            .overlay-screen h1 { font-size: clamp(24px, 7vw, 34px); }
+            .overlay-screen p { font-size: 15px; line-height: 1.5; }
+            .btn-start { font-size: 18px; padding: 13px 22px; }
+        }
+
+        @media (min-width: 701px) and (max-width: 1000px) {
+            main { padding: 16px 20px; }
+            .question-text { font-size: 28px; }
+            .answer-btn { font-size: 24px; padding: 15px 18px; }
+            footer { gap: 10px; padding: 0 12px; }
+            .btn-ctrl { padding: 10px 14px; font-size: 15px; }
+        }
     </style>
 </head>
 <body>
